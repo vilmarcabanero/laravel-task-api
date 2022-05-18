@@ -21,8 +21,8 @@ class AuthController extends Controller
             ], 400);
         } else {
             $user = User::create([
-                'first_name' => $request->input('first_name'),
-                'last_name' => $request->input('last_name'),
+                'firstName' => $request->input('firstName'),
+                'lastName' => $request->input('lastName'),
                 'email' => $request->input('email'),
                 'password' => Hash::make($request->input('password'))
             ]);
@@ -41,13 +41,29 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        // if (!Auth::attempt($request->only('email', 'password'))) {
+        //     return response([
+        //         'message' => 'Invalid credentials!'
+        //     ], 401);
+        // }
+
+        // Check email
+        $user = User::where('email', $request->input('email'))->first();
+
+        if(!$user) {
             return response([
-                'message' => 'Invalid credentials!'
+                'message' => 'Email is not yet registered.'
             ], 401);
         }
 
-        $user = Auth::user();
+        // Check password
+        if(!Hash::check($request->input('password'), $user->password)) {
+            return response([
+                'message' => 'Invalid password.'
+            ], 401);
+        }
+
+        // $user = Auth::user();
 
         $token = $user->createToken('token')->plainTextToken;
 

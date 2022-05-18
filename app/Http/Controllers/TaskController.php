@@ -92,7 +92,7 @@ class TaskController extends Controller
         $active_tasks = auth()->user()->tasks->where('is_active', true);
 
         return response()->json(
-            $active_tasks
+            array_values($active_tasks->toArray())
         );
     }
 
@@ -101,7 +101,7 @@ class TaskController extends Controller
         $complete_tasks = auth()->user()->tasks->where('complete', true);
 
         return response()->json(
-            $complete_tasks
+            array_values($complete_tasks->toArray())
         );
     }
 
